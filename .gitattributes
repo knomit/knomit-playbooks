@@ -1,0 +1,8 @@
+# LF in the object database AND in the working tree, on every platform.
+#
+# Git for Windows defaults to core.autocrlf=true, which rewrites text files to
+# CRLF on checkout. knomit's tests read these templates byte for byte (for
+# example the fenced blocks in the mission skills and the `id:` line in each
+# ontology), so a CRLF checkout fails them on a default Windows install. eol=lf
+# takes the choice away from each machine's git config.
+* text=auto eol=lf

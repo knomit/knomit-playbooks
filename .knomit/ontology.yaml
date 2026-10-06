@@ -1,0 +1,17 @@
+# The knomit-recipes knowledge base: facts that teach an agent how to program
+# knomit. The templates and artifacts under .knomit/ are not facts; they are
+# written through git only. Read README.md first.
+id: knomit-recipes
+name: knomit recipes
+description: How to program knomit (how-tos, patterns, reference, gotchas), and one fact per template under .knomit/templates/.
+topics:
+  howto:
+    description: Step-by-step instructions for a task in knomit, such as writing a template, adding a trigger or declaring context
+  patterns:
+    description: Reusable designs built from knomit's primitives, such as the mission patterns claim/wait/take and host-awarded
+  reference:
+    description: What each knob does, such as every ontology key with an example
+  gotchas:
+    description: Sharp edges and surprises met while programming knomit
+  templates:
+    description: One fact per template under .knomit/templates/ - what it is for and what to edit after creating a repo from it
