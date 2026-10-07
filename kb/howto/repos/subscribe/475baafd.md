@@ -16,7 +16,7 @@ POST /api/v1/repos
  "origin": {"url": "https://github.com/knomit/knomit-playbooks", "branch": "main"}}
 ```
 
-In the web UI: add a repo from the URL and choose **Subscribe**. Without `branch`, knomit follows the remote's HEAD unless that is an agent branch. The followed branch must already hold a knomit ontology; the subscription takes it from there and refuses `ontology_preset` and `ontology_yaml`.
+In the web UI: add a repo from the URL and choose **Subscribe**. Without `branch`, knomit follows the remote's HEAD unless HEAD is a role branch (`agent/…`, `exp/…` or a generated branch); then it follows the one branch that has no role, and refuses the create when there are several or none. Name `branch` to avoid the guess. The followed branch must already hold a knomit ontology; the subscription takes it from there and refuses `ontology_preset` and `ontology_yaml`.
 
 **What a subscription is.**
 - It fetches the origin at each sync round and follows the branch. It never pushes and has no agent branch.
@@ -26,4 +26,3 @@ In the web UI: add a repo from the URL and choose **Subscribe**. Without `branch
 - Its ontology is never upgraded to a newer embedded preset: a subscription never writes.
 
 **Trust.** You trust the repo you subscribe to, as with any git remote: a fork, or a repo you build yourself with the same layout, works the same way.
-
