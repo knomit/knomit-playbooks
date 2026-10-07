@@ -1,17 +1,25 @@
 # The knomit-playbooks knowledge base: facts that teach an agent how to program
-# knomit. The templates and artifacts under .knomit/ are not facts; they are
-# written through git only. Read README.md first.
+# knomit. The templates, artifacts and skills under .knomit/ are files, written
+# through git only; facts under kb/templates/ and kb/reference/ ref each of them
+# by its exact .knomit/ path, and knomit_explain reads them. Read README.md first.
 id: knomit-playbooks
 name: knomit playbooks
-description: How to program knomit (how-tos, patterns, reference, gotchas), and one fact per template under .knomit/templates/.
+description: How to program knomit (how-tos, patterns, reference, gotchas), and the facts that describe each template under .knomit/templates/ and each file it carries.
 topics:
   howto:
     description: Step-by-step instructions for a task in knomit, such as writing a template, adding a trigger or declaring context
   patterns:
     description: Reusable designs built from knomit's primitives, such as the mission patterns claim/wait/take and host-awarded
   reference:
-    description: What each knob does, such as every ontology key with an example
+    description: What each knob does, such as every ontology key with an example; and one fact per file under .knomit/ that is not part of a template (part file or part skill)
+    context:
+      part: {type: enum, values: [file, skill]}
   gotchas:
     description: Sharp edges and surprises met while programming knomit
   templates:
-    description: One fact per template under .knomit/templates/ - what it is for and what to edit after creating a repo from it
+    description: The templates under .knomit/templates/. Per template, kb/templates/<name>/ holds one part template fact (what it is for, how to create a repo from it), one part file fact per file it carries (kb/templates/<name>/files/...) and one part edit fact per change to make after creating (kb/templates/<name>/use/<topic>/)
+    attributes:
+      learn_dedup: off
+    context:
+      template: {type: string, required: true, pattern: "^[a-z][a-z0-9-]*$"}
+      part: {type: enum, values: [template, file, edit], required: true}

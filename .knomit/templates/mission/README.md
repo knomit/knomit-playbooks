@@ -25,17 +25,19 @@ files on two instances, so they do not rot.
 
 ## Copy it
 
-From a checkout of knomit-playbooks:
+Write every file of the template to the same path in a new git repository,
+and commit. A file at `.knomit/templates/mission/<path>` in knomit-playbooks
+goes to `<path>`: `README.md`, `.knomit/ontology.yaml`, `.knomit/triggers/`,
+`.knomit/skills/` and `.knomit/recipes/`. The facts under
+`kb/templates/mission/` in knomit-playbooks list each file, and
+`knomit_explain` on a file's path returns its content.
 
 ```sh
 git init my-mission
-cp -R .knomit/templates/mission/. my-mission/   # the trailing /. copies .knomit/ too
-rm my-mission/TEMPLATE.md                       # the manifest is not part of the repo
+# write each file to my-mission/<path>
 git -C my-mission add -A
 git -C my-mission commit -m "mission template"
 ```
-
-(`cp -r .knomit/templates/mission/* …` would skip `.knomit/`, which is the whole template.)
 
 A repo's ontology is read when knomit creates the repo, so create the knomit
 repo FROM this git repository rather than adding the ontology later.
