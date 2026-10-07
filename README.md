@@ -81,21 +81,27 @@ POST /api/v1/repos
  "template": {"repo": "knomit-playbooks", "name": "mission"}}
 ```
 
-The CLI is `kb repo create my-mission --template knomit-playbooks/mission`.
+`repo` is the name knomit-playbooks is mounted under; `GET /api/v1/templates`
+shows it. The CLI is `kb repo create my-mission --template knomit-playbooks/mission`.
 The web UI's create wizard has **From a template** on its ontology step.
 
 knomit copies the template's root `README.md` and everything under `.knomit/`
 (a file at `.knomit/templates/<name>/<path>` goes to `<path>` in the new repo)
 in one signed commit, and the new repo is an ordinary repo afterwards. This
-works the same for `mission`, `general` and `coding`. The `mission`
+works the same for `mission`, `general` and `coding`. Mode `template` copies the
+template as it is. To start from edited files, write them to a git repository,
+push it, create the repo with `"mode": "clone"` and the `origin`, and for a
+repo a knomit instance hosts remove the origin afterwards
+(`DELETE /api/v1/repos/<repo>/origin`); an ontology-only template can use
+`"mode": "custom"` with the edited ontology as `ontology_yaml`. The `mission`
 template's `README.md` says how to host and run the mission repo.
 
 A fleet repository is never created as a local repo: knomit treats any
 local repo whose ontology id is `fleet` as the instance's fleet, so mode
 `template` refuses the `fleet` template. Create it in mode `initialize` on a
 git repository every instance of the fleet can reach (a branch with a commit
-and no knomit ontology), and each instance joins with
-`knomit fleet register <url>`:
+and no knomit ontology). Once a person has merged the creating instance's
+agent branch into `main`, each instance joins with `knomit fleet register <url>`:
 
 ```
 POST /api/v1/repos

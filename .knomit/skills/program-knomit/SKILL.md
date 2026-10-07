@@ -115,7 +115,7 @@ repo: `.knomit/templates/mission/.knomit/triggers/claims.js` becomes
 `.knomit/triggers/claims.js`, and `.knomit/templates/mission/README.md`
 becomes `README.md`.
 
-Then decide the edits to make to the new repo: the ones the edit facts list,
+Then decide the edits: the ones the edit facts list,
 and the ones the request needs, in the ontology (`.knomit/ontology.yaml`), the skills
 (`.knomit/skills/`), the recipes (`.knomit/recipes/`) and the trigger
 scripts (`.knomit/triggers/`). The `kb/howto/` facts say how to write each.
@@ -135,9 +135,31 @@ POST /api/v1/repos
  "template": {"repo": "knomit-playbooks", "name": "<template>"}}
 ```
 
+`repo` is the name knomit-playbooks is mounted under; `GET /api/v1/templates`
+shows it.
+
 The CLI is `kb repo create <new repo> --template knomit-playbooks/<template>`.
 The web UI's create wizard has **From a template** on its ontology step. The new
 repo is an ordinary repo afterwards.
+
+- **The template with your edits**: mode `template` copies the template as
+  it is. After the create, files under `.knomit/` change only through git,
+  a repo with no origin accepts git pushes only from enrolled instances onto
+  their own agent branches, and knomit validates writes against the ontology
+  it read when the repo opened. So make the edits before the create: write
+  each file of the template, with your edits, to its path in a new git
+  repository, push it to a git host, and create the repo by cloning it:
+
+  ```
+  POST /api/v1/repos
+  {"name": "<new repo>", "mode": "clone",
+   "origin": {"url": "<git URL>", "branch": "main"}}
+  ```
+
+  For a repo a knomit instance hosts, then remove its origin
+  (`DELETE /api/v1/repos/<repo>/origin`). For an ontology-only template,
+  `mode: custom` with the edited `.knomit/ontology.yaml` as `ontology_yaml`
+  does the same in one request.
 
 - **A fleet repository** (template `fleet`, ontology id `fleet`) is refused in
   mode `template` (409): knomit treats any local repo with that id as the
@@ -152,7 +174,8 @@ repo is an ordinary repo afterwards.
    "template": {"repo": "knomit-playbooks", "name": "fleet"}}
   ```
 
-  Each instance then joins with `knomit fleet register <git URL>` (REST:
+  A person merges the creating instance's agent branch into `main`; then each
+  instance joins with `knomit fleet register <git URL>` (REST:
   `PUT /api/v1/fleet {"url": "<git URL>"}`).
 - **A repo hosted on a git forge**: use mode `initialize` as above with the
   forge repository as `origin`; the template's files go onto the instance's

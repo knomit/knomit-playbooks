@@ -10,8 +10,8 @@ base the charter names; the mission repo only points at it.
 
 Nothing here is compiled into knomit. The template is built from knomit's
 generic primitives only: an ontology with validations and triggers, trigger
-scripts (inline `js:` and files), repo skills, and a recipe. Create a repo from it,
-then edit it. A test in knomit (`internal/repos/mission_*_test.go`) runs these exact
+scripts (inline `js:` and files), repo skills, and a recipe. Create a repo from it as it is, or from your edited copy of its files ("With
+your edits" below). A test in knomit (`internal/repos/mission_*_test.go`) runs these exact
 files on two instances, so they do not rot.
 
 | File | What it does |
@@ -34,7 +34,8 @@ POST /api/v1/repos
  "template": {"repo": "knomit-playbooks", "name": "mission"}}
 ```
 
-The CLI is `kb repo create my-mission --template knomit-playbooks/mission`;
+`repo` is the name knomit-playbooks is mounted under; `GET /api/v1/templates`
+shows it. The CLI is `kb repo create my-mission --template knomit-playbooks/mission`;
 the web UI's create wizard has **From a template** on its ontology step.
 
 knomit copies this README and everything under `.knomit/` (`.knomit/ontology.yaml`,
@@ -45,13 +46,35 @@ file, and `knomit_explain` on a file's path returns its content.
 
 The ontology is part of that first commit, so the repo has it from the start.
 
+### With your edits
+
+Mode `template` copies the template as it is. After the create, files under
+`.knomit/` change only through git, a repo with no origin accepts git pushes
+only from enrolled instances onto their own agent branches, and knomit
+validates writes against the ontology it read when the repo opened. So make
+the edits before the create: write each file of the template, with your
+edits, to its path in a new git repository, push it to a git host, and create
+the repo by cloning it:
+
+```
+POST /api/v1/repos
+{"name": "my-mission", "mode": "clone",
+ "origin": {"url": "<git URL>", "branch": "main"}}
+```
+
+For a repo a knomit instance hosts, then remove its origin
+(`DELETE /api/v1/repos/<repo>/origin`).
+
 ### Knomit-hosted (the default in this template)
 
 One instance hosts the repo; the others are its peers.
 
 1. On the hosting instance, create the repo from the template as shown above.
    It has no origin, so this instance owns the repo's consensus branch, and
-   the loop that moves an origin-less repo's consensus branch forward moves it.
+   the loop that moves an origin-less repo's consensus branch forward moves it
+   (or, with your edits, clone your pushed copy and then remove its origin,
+   `DELETE /api/v1/repos/<repo>/origin`; with no origin this instance owns the
+   consensus branch).
 2. Enroll the other instances (fleet certificates, `push:own`) and let each
    clone the repo from the host. A peer pushes only its own agent branch.
 3. `consensus: auto` (already in the ontology) makes the host merge every
@@ -84,9 +107,10 @@ POST /api/v1/repos
 The template's files go onto the instance's agent branch, which is pushed to
 the forge; the forge's merge puts them on `main`, and every other instance
 then clones the repository. Delete the `consensus: auto` line: the forge owns
-the consensus branch, and something there merges the agents' branches into it (for example the knomit-kb
-`merge-agent-branches.yml` workflow). Keep `conflicts` exactly as it is: every
-instance's own sync still settles conflicts with it.
+the consensus branch, and something there merges the agents' branches into it
+(for example the knomit-kb `merge-agent-branches.yml` workflow). Keep
+`conflicts` exactly as it is: every instance's own sync still settles
+conflicts with it.
 
 ```yaml
 attributes:
