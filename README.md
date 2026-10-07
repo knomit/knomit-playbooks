@@ -108,9 +108,10 @@ repo only, and a subscription cannot be a lens's write repo, so bind
 {"binding": "<handle>", "name": "program-knomit"}
 ```
 
-A bridge started with `--repo knomit-recipes` serves it as the
-`program-knomit` prompt too. The facts are queryable from any lens that
-mounts `knomit-recipes`.
+An MCP client connected to the repo's own endpoint,
+`/api/v1/repos/knomit-recipes/branches/main/mcp`, also gets it as the
+`program-knomit` prompt, and calls `knomit_skill` there without a binding.
+The facts are queryable from any lens that mounts `knomit-recipes`.
 
 ## Layout
 

@@ -20,9 +20,9 @@ On the unscoped MCP endpoint, bind to it and keep the handle:
 {"repo": "knomit-recipes"}
 ```
 
-Pass the returned `binding` on every call below. On an endpoint that is
-already scoped to a repo or a lens (a bridge started with `--repo` or
-`--lens`), leave `binding` out.
+Pass the returned `binding` on every call below. On an endpoint scoped by
+its URL (this repo's own `/api/v1/repos/knomit-recipes/branches/main/mcp`, or
+a bridge started with `--repo` or `--lens`), leave `binding` out.
 
 On most instances `knomit-recipes` is a subscription, which refuses writes.
 Unless you were asked to add to this knowledge base, write nothing to it:
@@ -77,8 +77,7 @@ edit after copying.
 
 The templates are files in git, under `.knomit/templates/<name>/`. No knomit
 tool reads them: a path under `.knomit/` is closed to `knomit_query` and
-`knomit_explain`. Clone the repo (the URL is this subscription's origin;
-`knomit_repos` shows it):
+`knomit_explain`. Clone the repo (or the fork your instance subscribes to):
 
 ```sh
 git clone https://github.com/knomit/knomit-recipes
