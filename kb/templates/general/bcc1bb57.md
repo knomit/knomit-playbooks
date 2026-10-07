@@ -23,3 +23,5 @@ Template folder: `.knomit/templates/general/`.
 POST /api/v1/repos
 {"name": "<new repo>", "mode": "template", "template": {"repo": "knomit-playbooks", "name": "general"}}
 ```
+
+With an edited ontology, use `mode: custom` with the edited file as `ontology_yaml`.
