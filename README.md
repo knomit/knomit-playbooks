@@ -71,36 +71,38 @@ walk returns it.
 
 ## Create a repo from a template
 
-A file at `.knomit/templates/<name>/<path>` goes to `<path>` in the new
-repo.
-
-For the `mission` template, write each file to its path in a new git
-repository, commit, and push it to a git host. Create the knomit repo by
-cloning that URL, so knomit reads the template's ontology when it creates
-the repo:
+knomit creates a repo from a template of a mounted repo, so subscribe to
+knomit-playbooks first. `GET /api/v1/templates` lists the templates of every
+mounted repo; each `description` is the title of the template's fact.
 
 ```
 POST /api/v1/repos
-{"name": "my-mission", "mode": "clone",
- "origin": {"url": "<git URL of my-mission>", "branch": "main"}}
+{"name": "my-mission", "mode": "template",
+ "template": {"repo": "knomit-playbooks", "name": "mission"}}
 ```
 
-A local folder is not a valid origin on a default knomit instance. The
+The CLI is `kb repo create my-mission --template knomit-playbooks/mission`.
+The web UI's create wizard has **From a template** on its ontology step.
+
+knomit copies the template's root `README.md` and everything under `.knomit/`
+(a file at `.knomit/templates/<name>/<path>` goes to `<path>` in the new repo)
+in one signed commit, and the new repo is an ordinary repo afterwards. This
+works the same for `mission`, `general` and `coding`. The `mission`
 template's `README.md` says how to host and run the mission repo.
 
-The `general` and `coding` templates can also be created as a local repo,
-with the ontology inline:
+A fleet repository is never created as a local repo: knomit treats any
+local repo whose ontology id is `fleet` as the instance's fleet, so mode
+`template` refuses the `fleet` template. Create it in mode `initialize` on a
+git repository every instance of the fleet can reach (a branch with a commit
+and no knomit ontology), and each instance joins with
+`knomit fleet register <url>`:
 
 ```
 POST /api/v1/repos
-{"name": "my-kb", "mode": "custom",
- "ontology_yaml": "<contents of .knomit/templates/general/.knomit/ontology.yaml>"}
+{"name": "my-fleet", "mode": "initialize",
+ "origin": {"url": "<git URL>", "branch": "main"},
+ "template": {"repo": "knomit-playbooks", "name": "fleet"}}
 ```
-
-A fleet repository is never created as a local repo: knomit treats any
-mounted repo whose ontology id is `fleet` as the instance's fleet. Push it to
-a git host every instance of the fleet can reach, and each instance joins
-with `knomit fleet register <url>`.
 
 ## Templates
 

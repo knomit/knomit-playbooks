@@ -115,51 +115,50 @@ repo: `.knomit/templates/mission/.knomit/triggers/claims.js` becomes
 `.knomit/triggers/claims.js`, and `.knomit/templates/mission/README.md`
 becomes `README.md`.
 
-Then decide the edits: the ones the edit facts list, and the ones the
-request needs, in the ontology (`.knomit/ontology.yaml`), the skills
+Then decide the edits to make to the new repo: the ones the edit facts list,
+and the ones the request needs, in the ontology (`.knomit/ontology.yaml`), the skills
 (`.knomit/skills/`), the recipes (`.knomit/recipes/`) and the trigger
 scripts (`.knomit/triggers/`). The `kb/howto/` facts say how to write each.
 
 ## 5. Create the knomit repo
 
-A repo's ontology is set when knomit creates the repo, so create it from the
-finished files, never before them.
+A repo's ontology is set when knomit creates the repo, and knomit creates the
+repo from the template itself: it copies the template's root `README.md` and
+everything under `.knomit/` to the same paths in the new repo, in one signed
+commit. The template's repo (`knomit-playbooks`) must be mounted on the
+instance. `GET /api/v1/templates` lists the templates of every mounted repo;
+each `description` is the title of the template's fact.
 
-- **The template is an ontology only** (`general`, `coding`, or any
-  template whose only file under `.knomit/` is `ontology.yaml`, except
-  `fleet`): create a local repo with the edited ontology inline.
+```
+POST /api/v1/repos
+{"name": "<new repo>", "mode": "template",
+ "template": {"repo": "knomit-playbooks", "name": "<template>"}}
+```
+
+The CLI is `kb repo create <new repo> --template knomit-playbooks/<template>`.
+The web UI's create wizard has **From a template** on its ontology step. The new
+repo is an ordinary repo afterwards.
+
+- **A fleet repository** (template `fleet`, ontology id `fleet`) is refused in
+  mode `template` (409): knomit treats any local repo with that id as the
+  instance's fleet, and registering with the real fleet then fails. Create it
+  in mode `initialize` on a git repository every instance can reach (a
+  branch with a commit and no knomit ontology):
 
   ```
   POST /api/v1/repos
-  {"name": "<new repo>", "mode": "custom", "ontology_yaml": "<the edited .knomit/ontology.yaml>"}
+  {"name": "<new repo>", "mode": "initialize",
+   "origin": {"url": "<git URL>", "branch": "main"},
+   "template": {"repo": "knomit-playbooks", "name": "fleet"}}
   ```
 
-- **The template has skills, recipes or trigger scripts** (`mission`):
-  write every file to its path in a new git repository, commit, push it to
-  a git remote, and create the knomit repo by cloning that remote.
-
-  ```sh
-  git init my-repo
-  # write each file's content to my-repo/<path>, with your edits
-  git -C my-repo add -A
-  git -C my-repo commit -m "<name> template"
-  git -C my-repo push <git URL of my-repo> HEAD:main
-  ```
-
-  ```
-  POST /api/v1/repos
-  {"name": "<new repo>", "mode": "clone", "origin": {"url": "<git URL of my-repo>", "branch": "main"}}
-  ```
-
-  Then follow the template's `README.md` for hosting (the `mission`
-  template's "Copy it" section).
-
-- **A fleet repository** (ontology id `fleet`) is never created as a local
-  repo: knomit treats any mounted repo with that id as the instance's fleet,
-  and registering with the real fleet then fails. Write its files to a new
-  git repository as above, push it where every instance can reach it, and
-  each instance joins with `knomit fleet register <git URL>` (REST:
+  Each instance then joins with `knomit fleet register <git URL>` (REST:
   `PUT /api/v1/fleet {"url": "<git URL>"}`).
+- **A repo hosted on a git forge**: use mode `initialize` as above with the
+  forge repository as `origin`; the template's files go onto the instance's
+  agent branch, which is pushed, and the forge's merge puts them on `main`.
+- **A different ontology** than the template's: `POST /api/v1/ontologies:validate`
+  checks one, and `mode: custom` with `ontology_yaml` creates a repo from it.
 
 Creating a repo is an operator act, through the REST API or the web UI. If
 you cannot reach the REST API, give the person the exact request.
