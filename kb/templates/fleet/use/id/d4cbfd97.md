@@ -11,4 +11,4 @@ context: {part: edit, template: fleet}
 
 Do not change `id: fleet` in `.knomit/ontology.yaml`. knomit recognises the fleet repository by that id (`fact.IsFleetOntology`). With another id, `knomit fleet register` refuses the repo with `not_a_fleet` and the fleet code ignores it.
 
-The other side of the same rule: never create a repo with the id `fleet` as a local repo (`mode: custom` or `preset`). knomit treats any mounted repo with that id as the instance's fleet, and registering with the real fleet then fails with `already_registered`.
+The other side of the same rule: never create a repo with the id `fleet` as a local repo (`mode: custom`, `preset`, or `template` with the `fleet` template, which knomit refuses with 409). knomit treats any mounted repo with that id as the instance's fleet, and registering with the real fleet then fails with `already_registered`.
