@@ -4,7 +4,7 @@ domain: [repos, subscribe]
 confidence: 0.9
 sources: 1
 entities: [subscribe, POST /api/v1/repos, knomit_bind, ErrLensWriteSubscribed, subscription]
-refs: ['src://7b4887ce51d9/internal/repos/lifecycle.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:796ad8c466a76b7374e1e6d37e9c6ec70886aadc', 'src://7b4887ce51d9/internal/mcp/bind.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:1deba551896ff59779575a8ee13617d5cf6a52e6', 'src://7b4887ce51d9/internal/repos/manager.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:627b232058bdf78681b75824d43c9e5b9166038f', 'src://7b4887ce51d9/internal/repos/stages.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:30686f4d5efe58092e0c03953a92c5dd049604bd']
+refs: ['src://7b4887ce51d9/internal/repos/lifecycle.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:796ad8c466a76b7374e1e6d37e9c6ec70886aadc', 'src://7b4887ce51d9/internal/mcp/bind.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:1deba551896ff59779575a8ee13617d5cf6a52e6', 'src://7b4887ce51d9/internal/repos/manager.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:627b232058bdf78681b75824d43c9e5b9166038f', 'src://7b4887ce51d9/internal/repos/stages.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:30686f4d5efe58092e0c03953a92c5dd049604bd', 'src://7b4887ce51d9/internal/store/consensus_branch.go@22125f4f18249c1c9b8b855033b17f767fc1bdc8:c5454ba97845409dc554ae0af8d3bf348d7364ef']
 ---
 # Subscribe to a repo with mode subscribe: a read-only follower of one branch, with no agent branch, no writes and no push, that still serves its facts and skills
 
