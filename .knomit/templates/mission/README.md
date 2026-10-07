@@ -10,9 +10,10 @@ base the charter names; the mission repo only points at it.
 
 Nothing here is compiled into knomit. The template is built from knomit's
 generic primitives only: an ontology with validations and triggers, trigger
-scripts (inline `js:` and files), repo skills, and a recipe. Create a repo from it as it is, or from your edited copy of its files ("With
-your edits" below). A test in knomit (`internal/repos/mission_*_test.go`) runs these exact
-files on two instances, so they do not rot.
+scripts (inline `js:` and files), repo skills, and a recipe. Create a repo from
+it as it is, or from your edited copy of its files ("With your edits" below). A
+test in knomit (`internal/repos/mission_*_test.go`) runs these exact files on
+two instances, so they do not rot.
 
 | File | What it does |
 |---|---|

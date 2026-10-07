@@ -100,8 +100,7 @@ A fleet repository is never created as a local repo: knomit treats any
 local repo whose ontology id is `fleet` as the instance's fleet, so mode
 `template` refuses the `fleet` template. Create it in mode `initialize` on a
 git repository every instance of the fleet can reach (a branch with a commit
-and no knomit ontology). Once a person has merged the creating instance's
-agent branch into `main`, each instance joins with `knomit fleet register <url>`:
+and no knomit ontology):
 
 ```
 POST /api/v1/repos
@@ -109,6 +108,9 @@ POST /api/v1/repos
  "origin": {"url": "<git URL>", "branch": "main"},
  "template": {"repo": "knomit-playbooks", "name": "fleet"}}
 ```
+
+Once a person has merged the creating instance's agent branch into `main`, each
+instance joins with `knomit fleet register <url>`.
 
 ## Templates
 
