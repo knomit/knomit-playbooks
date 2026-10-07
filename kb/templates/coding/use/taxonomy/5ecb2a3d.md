@@ -9,7 +9,7 @@ context: {part: edit, template: coding}
 ---
 # Coding edit, the taxonomy: keep the ontology as it is to get the source-code preset and its upgrades; to fit your codebase, change topics or validations AND the id, name and description
 
-Edit `.knomit/ontology.yaml` before you create the repo, or not at all.
+Edit `.knomit/ontology.yaml` before you create the repo, or not at all. Mode `template` copies it as it is; to create with your edit, use `mode: custom` with the edited file as `ontology_yaml`.
 
 - **Keep it as it is** to get the source-code preset. With the id `source-code`, knomit upgrades the stored ontology to a newer embedded preset when the repo opens, as long as the stored one is a strict subset of it.
 - **Change topics or validations** to fit your codebase, and then also change `id`, `name` and `description`. knomit leaves an ontology that is no longer a subset of its preset alone, with a warning.
