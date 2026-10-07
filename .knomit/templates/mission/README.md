@@ -25,7 +25,7 @@ files on two instances, so they do not rot.
 
 ## Copy it
 
-From a checkout of knomit-recipes:
+From a checkout of knomit-playbooks:
 
 ```sh
 git init my-mission
@@ -44,10 +44,11 @@ repo FROM this git repository rather than adding the ontology later.
 
 One instance hosts the repo; the others are its peers.
 
-1. On the hosting instance, create the repo by cloning the git repository you
-   just made, then remove its origin (repo settings, or
-   `DELETE /api/v1/repos/<repo>/origin`). With no origin, this instance owns
-   the repo's consensus branch. The repo keeps the branch it was cloned on,
+1. Push the git repository you just made to a git host, and on the hosting
+   instance create the repo by cloning that URL (a local folder is a valid
+   origin only when the host sets `local_origin_root`). Then remove its
+   origin (repo settings, or `DELETE /api/v1/repos/<repo>/origin`). With no
+   origin, this instance owns the repo's consensus branch. The repo keeps the branch it was cloned on,
    whatever its name, and the loop that moves an origin-less repo's consensus
    branch forward starts as soon as the origin is removed.
 2. Enroll the other instances (fleet certificates, `push:own`) and let each
