@@ -25,7 +25,7 @@ files on two instances, so they do not rot.
 
 ## Copy it
 
-From a checkout of knomit-recipes:
+From a checkout of knomit-playbooks:
 
 ```sh
 git init my-mission

@@ -1,6 +1,7 @@
-# knomit-recipes
+# knomit-playbooks
 
-knomit-recipes is a knomit knowledge base for programming knomit. It holds:
+knomit-playbooks is a knomit knowledge base of playbooks for programming
+knomit. It holds:
 
 - **`kb/`**: facts on how to program knomit, under the topics `howto`,
   `patterns`, `reference`, `gotchas` and `templates`.
@@ -23,13 +24,13 @@ knomit instances use this repo by subscribing to it. A subscription is
 read-only: it has no agent branch, never pushes, and picks up new commits on
 `main` at each sync.
 
-In the knomit web UI, add a repo from `https://github.com/knomit/knomit-recipes`,
+In the knomit web UI, add a repo from `https://github.com/knomit/knomit-playbooks`,
 branch `main`, and choose **Subscribe**. With the REST API:
 
 ```
 POST /api/v1/repos
-{"name": "knomit-recipes", "mode": "subscribe",
- "origin": {"url": "https://github.com/knomit/knomit-recipes", "branch": "main"}}
+{"name": "knomit-playbooks", "mode": "subscribe",
+ "origin": {"url": "https://github.com/knomit/knomit-playbooks", "branch": "main"}}
 ```
 
 Trust follows git: you trust the repo you subscribe to. A fork, or a repo you
@@ -40,21 +41,28 @@ make with the same layout, works the same way.
 Example for the `mission` template:
 
 ```sh
-git clone https://github.com/knomit/knomit-recipes
+git clone https://github.com/knomit/knomit-playbooks
 git init my-mission
-cp -R knomit-recipes/.knomit/templates/mission/. my-mission/   # the trailing /. copies .knomit/ too
+cp -R knomit-playbooks/.knomit/templates/mission/. my-mission/   # the trailing /. copies .knomit/ too
 rm my-mission/TEMPLATE.md
 git -C my-mission add -A
 git -C my-mission commit -m "mission template"
 ```
 
-Then create the knomit repo by cloning `my-mission`, so knomit reads the
-template's ontology when it creates the repo. The template's `README.md` says
-how to host and run it.
+Push `my-mission` to a git host, then create the knomit repo by cloning
+that URL, so knomit reads the template's ontology when it creates the repo:
 
-A template whose only file under `.knomit/` is `ontology.yaml` (`general`,
-`coding`, `fleet`) can also be created as a local repo, with the ontology
-inline:
+```
+POST /api/v1/repos
+{"name": "my-mission", "mode": "clone",
+ "origin": {"url": "<git URL of my-mission>", "branch": "main"}}
+```
+
+A local folder is not a valid origin on a default knomit instance. The
+template's `README.md` says how to host and run the mission repo.
+
+The `general` and `coding` templates can also be created as a local repo,
+with the ontology inline:
 
 ```
 POST /api/v1/repos
@@ -62,9 +70,10 @@ POST /api/v1/repos
  "ontology_yaml": "<contents of .knomit/templates/general/.knomit/ontology.yaml>"}
 ```
 
-A fleet repository is shared by every instance of the fleet: push it to a
-git host they can all reach, and each instance joins with
-`knomit fleet register <url>`.
+A fleet repository is never created as a local repo: knomit treats any
+mounted repo whose ontology id is `fleet` as the instance's fleet. Push it to
+a git host every instance of the fleet can reach, and each instance joins
+with `knomit fleet register <url>`.
 
 ## Templates
 
@@ -72,11 +81,12 @@ git host they can all reach, and each instance joins with
   agents of one mission coordinate there (tasks, claims, working copies,
   acknowledgements) and annotate facts in a target knowledge base.
 - [`general`](.knomit/templates/general/TEMPLATE.md): a general knowledge
-  base. knomit's built-in `general` preset.
+  base. knomit's built-in preset `default` (ontology id `general`).
 - [`coding`](.knomit/templates/coding/TEMPLATE.md): a knowledge base for a
-  codebase. knomit's built-in `source-code` preset.
+  codebase. knomit's built-in preset `code` (ontology id `source-code`).
 - [`fleet`](.knomit/templates/fleet/TEMPLATE.md): a fleet repository, one
-  member record per agent. knomit's built-in `fleet` preset.
+  member record per agent. knomit's built-in preset `fleet` (ontology id
+  `fleet`).
 
 Each template folder has a `TEMPLATE.md` with its name, its description, what
 to edit after copying, and its source. `TEMPLATE.md` is not part of the
@@ -98,10 +108,10 @@ MCP calls.
 knomit serves a repo's skills on a binding of that repo: the `knomit_skill`
 tool and the MCP prompts list them. A lens serves the skills of its write
 repo only, and a subscription cannot be a lens's write repo, so bind
-`knomit-recipes` itself to get this skill:
+`knomit-playbooks` itself to get this skill:
 
 ```json knomit_bind
-{"repo": "knomit-recipes"}
+{"repo": "knomit-playbooks"}
 ```
 
 ```json knomit_skill
@@ -109,9 +119,9 @@ repo only, and a subscription cannot be a lens's write repo, so bind
 ```
 
 An MCP client connected to the repo's own endpoint,
-`/api/v1/repos/knomit-recipes/branches/main/mcp`, also gets it as the
+`/api/v1/repos/knomit-playbooks/branches/main/mcp`, also gets it as the
 `program-knomit` prompt, and calls `knomit_skill` there without a binding.
-The facts are queryable from any lens that mounts `knomit-recipes`.
+The facts are queryable from any lens that mounts `knomit-playbooks`.
 
 ## Layout
 

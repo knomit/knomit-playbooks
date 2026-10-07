@@ -1,8 +1,8 @@
-# The knomit-recipes knowledge base: facts that teach an agent how to program
+# The knomit-playbooks knowledge base: facts that teach an agent how to program
 # knomit. The templates and artifacts under .knomit/ are not facts; they are
 # written through git only. Read README.md first.
-id: knomit-recipes
-name: knomit recipes
+id: knomit-playbooks
+name: knomit playbooks
 description: How to program knomit (how-tos, patterns, reference, gotchas), and one fact per template under .knomit/templates/.
 topics:
   howto:

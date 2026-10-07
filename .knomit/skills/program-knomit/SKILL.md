@@ -1,6 +1,6 @@
 ---
 name: program-knomit
-description: Use when asked to set something up in knomit - a new knowledge base or mission repo, a trigger, a recipe, a skill, context keys, guidance - or to explain how to program knomit. Finds the answer in the knomit-recipes knowledge base and starts from one of its templates.
+description: Use when asked to set something up in knomit - a new knowledge base or mission repo, a trigger, a recipe, a skill, context keys, guidance - or to explain how to program knomit. Finds the answer in the knomit-playbooks knowledge base and starts from one of its templates.
 ---
 
 # Program knomit
@@ -13,18 +13,18 @@ $ARGUMENTS
 
 ## 1. Bind to this knowledge base
 
-knomit serves this skill on a binding of the `knomit-recipes` repo itself.
+knomit serves this skill on a binding of the `knomit-playbooks` repo itself.
 On the unscoped MCP endpoint, bind to it and keep the handle:
 
 ```json knomit_bind
-{"repo": "knomit-recipes"}
+{"repo": "knomit-playbooks"}
 ```
 
-Pass the returned `binding` on every call below. On an endpoint scoped by
-its URL (this repo's own `/api/v1/repos/knomit-recipes/branches/main/mcp`, or
-a bridge started with `--repo` or `--lens`), leave `binding` out.
+Pass the returned `binding` on every call below. On this repo's own
+endpoint, `/api/v1/repos/knomit-playbooks/branches/main/mcp`, the binding
+comes from the URL: leave `binding` out.
 
-On most instances `knomit-recipes` is a subscription, which refuses writes.
+On most instances `knomit-playbooks` is a subscription, which refuses writes.
 Unless you were asked to add to this knowledge base, write nothing to it:
 every write in the steps below goes to the repo you are setting up.
 
@@ -51,7 +51,7 @@ A result row carries a snippet only. Read each fact you rely on in full:
 ```
 
 Pass `file` exactly as the result row gives it. Through a lens, a fact from
-`knomit-recipes` comes back as `kb://<repo-id>/kb/...`; pass that whole
+`knomit-playbooks` comes back as `kb://<repo-id>/kb/...`; pass that whole
 value. A fact names the knomit source files it was verified against in its
 refs.
 
@@ -66,9 +66,9 @@ List the templates:
 | Template | For |
 |---|---|
 | `mission` | the agents of one mission coordinating (tasks, claims, queues, acknowledgements) and annotating a target knowledge base |
-| `general` | a general knowledge base (knomit's `general` preset) |
-| `coding` | a knowledge base for a codebase (knomit's `source-code` preset) |
-| `fleet` | a fleet repository: one member record per agent (knomit's `fleet` preset) |
+| `general` | a general knowledge base (knomit's preset `default`, ontology id `general`) |
+| `coding` | a knowledge base for a codebase (knomit's preset `code`, ontology id `source-code`) |
+| `fleet` | a fleet repository: one member record per agent (knomit's preset `fleet`) |
 
 Pick the closest one. Each template folder has a `TEMPLATE.md` with what to
 edit after copying.
@@ -80,9 +80,9 @@ tool reads them: a path under `.knomit/` is closed to `knomit_query` and
 `knomit_explain`. Clone the repo (or the fork your instance subscribes to):
 
 ```sh
-git clone https://github.com/knomit/knomit-recipes
+git clone https://github.com/knomit/knomit-playbooks
 git init my-repo
-cp -R knomit-recipes/.knomit/templates/<name>/. my-repo/   # the trailing /. copies .knomit/ too
+cp -R knomit-playbooks/.knomit/templates/<name>/. my-repo/   # the trailing /. copies .knomit/ too
 rm my-repo/TEMPLATE.md
 ```
 
@@ -101,9 +101,9 @@ git -C my-repo commit -m "<name> template"
 A repo's ontology is set when knomit creates the repo, so create it from the
 finished files, never before them.
 
-- **The template is an ontology only** (`general`, `coding`, `fleet`, or
-  any template whose only file under `.knomit/` is `ontology.yaml`): create
-  a local repo with the ontology inline.
+- **The template is an ontology only** (`general`, `coding`, or any
+  template whose only file under `.knomit/` is `ontology.yaml`, except
+  `fleet`): create a local repo with the ontology inline.
 
   ```
   POST /api/v1/repos
@@ -121,9 +121,11 @@ finished files, never before them.
   Then follow the template's `README.md` for hosting (the `mission`
   template's "Copy it" section).
 
-- **A fleet repository** is not created on one instance: push `my-repo`
-  where every instance can reach it, and each instance joins with
-  `PUT /api/v1/fleet {"url": "<git URL>"}`.
+- **A fleet repository** (ontology id `fleet`) is never created as a local
+  repo: knomit treats any mounted repo with that id as the instance's fleet,
+  and registering with the real fleet then fails. Push `my-repo` where every
+  instance can reach it, and each instance joins with
+  `knomit fleet register <git URL>` (REST: `PUT /api/v1/fleet {"url": "<git URL>"}`).
 
 Creating a repo is an operator act, through the REST API or the web UI. If
 you cannot reach the REST API, give the person the exact request.
