@@ -10,9 +10,10 @@ base the charter names; the mission repo only points at it.
 
 Nothing here is compiled into knomit. The template is built from knomit's
 generic primitives only: an ontology with validations and triggers, trigger
-scripts (inline `js:` and files), repo skills, and a recipe. Copy it, then edit
-it. A test in knomit (`internal/repos/mission_*_test.go`) runs these exact
-files on two instances, so they do not rot.
+scripts (inline `js:` and files), repo skills, and a recipe. Create a repo from
+it as it is, or from your edited copy of its files ("With your edits" below). A
+test in knomit (`internal/repos/mission_*_test.go`) runs these exact files on
+two instances, so they do not rot.
 
 | File | What it does |
 |---|---|
@@ -23,36 +24,58 @@ files on two instances, so they do not rot.
 | `.knomit/skills/work-task/SKILL.md` | How a session drains its queue: take each copy, work it in a knowledge-base experiment, acknowledge it. |
 | `.knomit/recipes/work-task.js` | The sample recipe the `wake` and `lease` triggers run: one headless Claude Code session that drains the queue. |
 
-## Copy it
+## Create it
 
-Write every file of the template to the same path in a new git repository,
-and commit. A file at `.knomit/templates/mission/<path>` in knomit-playbooks
-goes to `<path>`: `README.md`, `.knomit/ontology.yaml`, `.knomit/triggers/`,
-`.knomit/skills/` and `.knomit/recipes/`. The facts under
-`kb/templates/mission/` in knomit-playbooks list each file, and
-`knomit_explain` on a file's path returns its content.
+Create the repo from the template. knomit reads it from a mounted
+knomit-playbooks, so subscribe to knomit-playbooks first.
 
-```sh
-git init my-mission
-# write each file to my-mission/<path>
-git -C my-mission add -A
-git -C my-mission commit -m "mission template"
+```
+POST /api/v1/repos
+{"name": "my-mission", "mode": "template",
+ "template": {"repo": "knomit-playbooks", "name": "mission"}}
 ```
 
-A repo's ontology is read when knomit creates the repo, so create the knomit
-repo FROM this git repository rather than adding the ontology later.
+`repo` is the name knomit-playbooks is mounted under; `GET /api/v1/templates`
+shows it. The CLI is `kb repo create my-mission --template knomit-playbooks/mission`;
+the web UI's create wizard has **From a template** on its ontology step.
+
+knomit copies this README and everything under `.knomit/` (`.knomit/ontology.yaml`,
+`.knomit/triggers/`, `.knomit/skills/` and `.knomit/recipes/`) to the same paths
+in the new repo, in one signed commit. The new repo is an ordinary knomit repo
+afterwards. The facts under `kb/templates/mission/` in knomit-playbooks list each
+file, and `knomit_explain` on a file's path returns its content.
+
+The ontology is part of that first commit, so the repo has it from the start.
+
+### With your edits
+
+Mode `template` copies the template as it is. After the create, files under
+`.knomit/` change only through git, a repo with no origin accepts git pushes
+only from enrolled instances onto their own agent branches, and knomit
+validates writes against the ontology it read when the repo opened. So make
+the edits before the create: write each file of the template, with your
+edits, to its path in a new git repository, push it to a git host, and create
+the repo by cloning it:
+
+```
+POST /api/v1/repos
+{"name": "my-mission", "mode": "clone",
+ "origin": {"url": "<git URL>", "branch": "main"}}
+```
+
+For a repo a knomit instance hosts, then remove its origin
+(`DELETE /api/v1/repos/<repo>/origin`).
 
 ### Knomit-hosted (the default in this template)
 
 One instance hosts the repo; the others are its peers.
 
-1. Push the git repository you just made to a git host, and on the hosting
-   instance create the repo by cloning that URL (a local folder is a valid
-   origin only when the host sets `local_origin_root`). Then remove its
-   origin (repo settings, or `DELETE /api/v1/repos/<repo>/origin`). With no
-   origin, this instance owns the repo's consensus branch. The repo keeps the branch it was cloned on,
-   whatever its name, and the loop that moves an origin-less repo's consensus
-   branch forward starts as soon as the origin is removed.
+1. On the hosting instance, create the repo from the template as shown above.
+   It has no origin, so this instance owns the repo's consensus branch, and
+   the loop that moves an origin-less repo's consensus branch forward moves it
+   (or, with your edits, clone your pushed copy and then remove its origin,
+   `DELETE /api/v1/repos/<repo>/origin`; with no origin this instance owns the
+   consensus branch).
 2. Enroll the other instances (fleet certificates, `push:own`) and let each
    clone the repo from the host. A peer pushes only its own agent branch.
 3. `consensus: auto` (already in the ontology) makes the host merge every
@@ -71,11 +94,24 @@ One instance hosts the repo; the others are its peers.
 
 ### GitHub-hosted (or GitLab, or any forge)
 
-Push the repository to the forge and let every instance clone it. Delete the
-`consensus: auto` line: the forge owns the consensus branch, and something
-there merges the agents' branches into it (for example the knomit-kb
-`merge-agent-branches.yml` workflow). Keep `conflicts` exactly as it is: every
-instance's own sync still settles conflicts with it.
+Create a repository on the forge whose `main` branch has a commit and no
+knomit ontology. On one instance, create the knomit repo from the template in
+mode `initialize` with that repository as its origin:
+
+```
+POST /api/v1/repos
+{"name": "my-mission", "mode": "initialize",
+ "origin": {"url": "<git URL of the forge repository>", "branch": "main"},
+ "template": {"repo": "knomit-playbooks", "name": "mission"}}
+```
+
+The template's files go onto the instance's agent branch, which is pushed to
+the forge; the forge's merge puts them on `main`, and every other instance
+then clones the repository. Delete the `consensus: auto` line: the forge owns
+the consensus branch, and something there merges the agents' branches into it
+(for example the knomit-kb `merge-agent-branches.yml` workflow). Keep
+`conflicts` exactly as it is: every instance's own sync still settles
+conflicts with it.
 
 ```yaml
 attributes:
