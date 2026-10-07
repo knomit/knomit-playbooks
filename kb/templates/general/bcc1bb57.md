@@ -4,7 +4,7 @@ domain: [templates, ontology]
 confidence: 0.9
 sources: 1
 entities: [general template, general, default preset]
-refs: ['kb://034f37d5b4a5/kb/templates/general/files/ontology/bc074670.md', 'kb://034f37d5b4a5/kb/templates/general/files/readme/c462495d.md', 'kb://034f37d5b4a5/kb/templates/general/use/readme/2700ed54.md', 'kb://034f37d5b4a5/kb/templates/general/use/taxonomy/1d527aa2.md', 'kb://034f37d5b4a5/kb/howto/templates/create-repo/8eba1951.md']
+refs: ['kb://034f37d5b4a5/kb/howto/templates/create-repo/8eba1951.md', 'kb://034f37d5b4a5/kb/templates/general/files/ontology/bc074670.md', 'kb://034f37d5b4a5/kb/templates/general/files/readme/c462495d.md', 'kb://034f37d5b4a5/kb/templates/general/use/readme/2700ed54.md', 'kb://034f37d5b4a5/kb/templates/general/use/taxonomy/1d527aa2.md']
 context: {part: template, template: general}
 ---
 # The general template is knomit's built-in general preset (ontology id general) as a template: a broad subject taxonomy, ontology only, created as a custom local repo
