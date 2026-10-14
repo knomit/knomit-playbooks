@@ -5,12 +5,18 @@ description: >-
   members/, holding the agent's CURRENT state and key; earlier keys and
   states are earlier versions of the same fact (knomit explain). Records are
   never deleted: leaving or revoking is a state change. An instance joins by
-  writing its own record on its agent branch; a human accepts by merging it
-  into main.
+  writing its own record on its agent branch; the record counts once it
+  reaches main. How it gets there depends on who hosts the fleet repository
+  and how its ontology is configured (for example `consensus` on a knomit
+  host, or a forge's merge workflow).
 # Every commit that enters main is judged against the member records and,
-# once the fleet has a root certificate, the fleet's certificates.
+# once the fleet has a root certificate, the fleet's certificates. On a
+# knomit host with no origin, consensus: auto merges every pushed member
+# branch the push gate admitted; it is inert where the repository has an
+# origin (a forge merges by its own workflow).
 attributes:
   verify_signatures: enforce
+  consensus: auto
 # The fleet's certificate artifacts, under artifacts/ (R7). The commit judge
 # enforces these rules on every commit; the fleet reader finds the
 # certificates through the pki declarations. Each issuance (the issued leaf)

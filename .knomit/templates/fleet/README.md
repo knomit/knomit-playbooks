@@ -6,9 +6,13 @@ fact at `kb/members/<agent-id>/<id>.md`: its state (`active`, `left` or
 never deleted; earlier states and keys stay readable as the record's
 history.
 
-An instance joins by writing its own record on its agent branch. A person
-accepts it by merging that branch into `main`. Everything under `.knomit/`
-changes through git only.
+An instance joins by writing its own record on its agent branch. The record
+counts once it reaches `main`. On a forge, a person or the forge's workflow
+merges that branch. Everything under `.knomit/` changes through git only.
+
+The ontology also declares `consensus: auto`. It acts only where a knomit
+instance hosts this repository with no origin: that host then merges every
+member branch its push gate admitted. On a forge it does nothing.
 
 Agent ids are lower case. They are compared exactly, and nothing folds their
 case.
@@ -44,3 +48,9 @@ apart. Nothing reads an order or a meaning from a file name.
 The root can be added only while it is missing. Adding it first, before any
 member exists, leaves no window in which someone else can add a root of
 their own.
+
+`knomit fleet create --origin <git URL>` does these steps for you. It
+initializes the repository, commits `root.crt` and `crl.pem` from the fleet
+root directory (`<home>/fleet`) first, and then commits the creating
+instance's certificate and its member record. When `<home>/fleet` has no
+root yet, it creates one there.
