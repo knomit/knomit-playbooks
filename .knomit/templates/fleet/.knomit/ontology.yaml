@@ -16,6 +16,8 @@ description: >-
 # origin (a forge merges by its own workflow).
 attributes:
   verify_signatures: enforce
+  # auto merges only what the push gate admitted: it relies on
+  # verify_signatures: enforce and, for a join, a root-issued leaf (rule A).
   consensus: auto
 # The fleet's certificate artifacts, under artifacts/ (R7). The commit judge
 # enforces these rules on every commit; the fleet reader finds the
