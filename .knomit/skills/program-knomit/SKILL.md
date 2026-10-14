@@ -70,7 +70,6 @@ is for and how to create a repo from it. List them:
 | `mission` | the agents of one mission coordinating (tasks, claims, queues, acknowledgements) and annotating a target knowledge base |
 | `general` | a general knowledge base (knomit's preset `default`, ontology id `general`) |
 | `coding` | a knowledge base for a codebase (knomit's preset `code`, ontology id `source-code`) |
-| `fleet` | a fleet repository: one member record per agent (knomit's preset `fleet`) |
 
 Pick the closest one. Its facts all carry context `template: <name>`.
 
@@ -161,22 +160,7 @@ repo is an ordinary repo afterwards.
   `mode: custom` with the edited `.knomit/ontology.yaml` as `ontology_yaml`
   does the same in one request.
 
-- **A fleet repository** (template `fleet`, ontology id `fleet`) is refused in
-  mode `template` (409): knomit treats any local repo with that id as the
-  instance's fleet, and registering with the real fleet then fails. Create it
-  in mode `initialize` on a git repository every instance can reach (a
-  branch with a commit and no knomit ontology):
-
-  ```
-  POST /api/v1/repos
-  {"name": "<new repo>", "mode": "initialize",
-   "origin": {"url": "<git URL>", "branch": "main"},
-   "template": {"repo": "knomit-playbooks", "name": "fleet"}}
-  ```
-
-  A person merges the creating instance's agent branch into `main`; then each
-  instance joins with `knomit fleet register <git URL>` (REST:
-  `PUT /api/v1/fleet {"url": "<git URL>"}`).
+- **A fleet repository** is not a template. The ontology id `fleet` is reserved: a fleet repository is not created from a template, a preset or your own YAML. Its ontology is built into knomit, every create mode refuses that id (422 "Fleet ontology reserved"), and only the `knomit fleet` commands create or join one.
 - **A repo hosted on a git forge**: use mode `initialize` as above with the
   forge repository as `origin`; the template's files go onto the instance's
   agent branch, which is pushed, and the forge's merge puts them on `main`.
