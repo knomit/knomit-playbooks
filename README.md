@@ -96,21 +96,10 @@ repo a knomit instance hosts remove the origin afterwards
 `"mode": "custom"` with the edited ontology as `ontology_yaml`. The `mission`
 template's `README.md` says how to host and run the mission repo.
 
-A fleet repository is never created as a local repo: knomit treats any
-local repo whose ontology id is `fleet` as the instance's fleet, so mode
-`template` refuses the `fleet` template. Create it in mode `initialize` on a
-git repository every instance of the fleet can reach (a branch with a commit
-and no knomit ontology):
-
-```
-POST /api/v1/repos
-{"name": "my-fleet", "mode": "initialize",
- "origin": {"url": "<git URL>", "branch": "main"},
- "template": {"repo": "knomit-playbooks", "name": "fleet"}}
-```
-
-Once a person has merged the creating instance's agent branch into `main`, each
-instance joins with `knomit fleet register <url>`.
+The ontology id `fleet` is reserved: a fleet repository is not created from a
+template, a preset or your own YAML. Its ontology is built into knomit, every
+create mode refuses that id, and only the `knomit fleet` commands create or
+join one.
 
 ## Templates
 
@@ -121,8 +110,6 @@ instance joins with `knomit fleet register <url>`.
   knomit's built-in preset `default` (ontology id `general`).
 - [`coding`](.knomit/templates/coding/): a knowledge base for a codebase.
   knomit's built-in preset `code` (ontology id `source-code`).
-- [`fleet`](.knomit/templates/fleet/): a fleet repository, one member
-  record per agent. knomit's built-in preset `fleet` (ontology id `fleet`).
 
 ## Artifacts
 
