@@ -5,8 +5,9 @@ working copies and acknowledgements. It is a knomit repo of its own, separate
 from any knowledge base. It holds signals (`kind: pragmatic`, `type: signal`),
 facts that are consumed once and never believed, plus one topic of
 annotations: facts ABOUT the target knowledge base's facts (README
-"Annotations"). The knowledge an agent produces goes to the target knowledge
-base the charter names; the mission repo only points at it.
+"Annotations"), and one topic of frames (README "Frames"). The knowledge an
+agent produces goes to the target knowledge base the charter names; the
+mission repo only points at it.
 
 Nothing here is compiled into knomit. The template is built from knomit's
 generic primitives only: an ontology with validations and triggers, trigger
@@ -631,6 +632,24 @@ instruction. Authorship is in git, so the coordinator picks the paths (the
 
 Each checker gets facts other agents wrote, so that every fact gets at least
 one checker other than its writer.
+
+## Frames
+
+`frames/` is the mission repo's topic of frames: a mission's thinking-process
+nodes (`kind: pragmatic`, `type: frame`). It needs knomit with the `frame`
+type.
+
+- **Type.** A validation refuses anything under `frames/` that is not a frame.
+- **`learn_dedup: off`.** Frames look alike by design; with dedup on, two
+  sibling frames would merge, an observation would fold into a frame, and an
+  incoming frame could settle a nearby hypothesis. The type alone does not
+  prevent that; this topic setting does.
+- **`status`.** The context key `status` is an enum, `open`, `resolved` or
+  `abandoned`. It is not required. The template does not define what
+  `abandoned` implies (in particular, whether it means the frame is
+  retracted).
+- **No parent rule.** The template does not require a frame to ref a parent
+  frame; that is defined with materialize.
 
 ## Skills
 
