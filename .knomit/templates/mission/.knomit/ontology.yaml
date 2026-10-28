@@ -217,15 +217,13 @@ topics:
   # it, two sibling frames look alike and merge, an observation folds into a
   # frame, and an incoming frame can settle a nearby hypothesis. The type
   # alone does not prevent that; this topic setting does.
-  # No parent rule here: whether and how a frame refs its parent is defined
-  # with materialize, not in this template.
+  # A frame's parents are the frames it refs (any ref whose target is a frame),
+  # and a frame may have several.
   frames:
-    description: A mission's frames (kind pragmatic, type frame), frames/. context.status is open, resolved or abandoned.
+    description: A mission's frames (kind pragmatic, type frame), frames/.
     attributes:
       learn_dedup: off
     validations:
       - name: frame
         message: a frame is a frame (kind pragmatic, type frame)
         rule: "fact.type === 'frame'"
-    context:
-      status: {type: enum, values: [open, resolved, abandoned]}
