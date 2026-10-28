@@ -644,12 +644,8 @@ type.
   sibling frames would merge, an observation would fold into a frame, and an
   incoming frame could settle a nearby hypothesis. The type alone does not
   prevent that; this topic setting does.
-- **`status`.** The context key `status` is an enum, `open`, `resolved` or
-  `abandoned`. It is not required. The template does not define what
-  `abandoned` implies (in particular, whether it means the frame is
-  retracted).
-- **No parent rule.** The template does not require a frame to ref a parent
-  frame; that is defined with materialize.
+- **Parents.** A frame's parents are the frames it refs (any ref whose
+  target is a frame), and a frame may have several.
 
 ## Skills
 
