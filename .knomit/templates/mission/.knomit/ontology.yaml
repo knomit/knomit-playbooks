@@ -211,3 +211,21 @@ topics:
       kind:       {type: enum, values: [verdict], required: true}
       verdict:    {type: enum, values: [corroborate, contradict]}
       confidence: {type: number, min: 0, max: 1}
+
+  # --- Frames: a mission's thinking-process nodes (kind pragmatic, type frame) ---
+  # learn_dedup: off, as for every signal topic and for annotations. Without
+  # it, two sibling frames look alike and merge, an observation folds into a
+  # frame, and an incoming frame can settle a nearby hypothesis. The type
+  # alone does not prevent that; this topic setting does.
+  # No parent rule here: whether and how a frame refs its parent is defined
+  # with materialize, not in this template.
+  frames:
+    description: A mission's frames (kind pragmatic, type frame), frames/. context.status is open, resolved or abandoned.
+    attributes:
+      learn_dedup: off
+    validations:
+      - name: frame
+        message: a frame is a frame (kind pragmatic, type frame)
+        rule: "fact.type === 'frame'"
+    context:
+      status: {type: enum, values: [open, resolved, abandoned]}
